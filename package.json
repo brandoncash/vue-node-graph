@@ -1,6 +1,8 @@
 {
   "name": "vue-node-graph",
   "version": "0.1.0",
+  "author": "Brandon Cash <brandoncash@gmail.com>",
+  "description": "A Vue component for building node graphs (e.g. UMLs, flow charts)",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -9,7 +11,11 @@
   },
   "dependencies": {
     "core-js": "^3.4.4",
-    "vue": "^2.6.10"
+    "node-sass": "^4.13.0",
+    "sass-loader": "^8.0.0",
+    "vue": "^2.6.10",
+    "vue-draggable-resizable": "^2.1.0",
+    "vue-dragscroll": "^1.10.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.1.0",
