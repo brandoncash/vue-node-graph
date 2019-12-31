@@ -65,16 +65,18 @@ export default {
 
 <template>
   <vue-draggable-resizable
-    class="draggable"
+    class="flow-grid-node"
     :active="true"
     :draggable="true"
     :grid="[30,30]"
     :w="node.dimensions.width * 30"
-    :minw="6 * 30"
-    :h="120"
+    :minWidth="6 * 30"
+    :maxWidth="12 * 30"
+    :h="30 + (node.description != null ? 60 : 0) + (node.events.length * 30)"
     :x="node.dimensions.x * 30"
     :y="node.dimensions.y * 30"
     :handles="['ml', 'mr']"
+    dragHandle=".node-header"
     @resizing="onResize"
     @dragging="onDrag"
     @activated="onActivate"
@@ -87,7 +89,10 @@ export default {
       {{ node.title }}
     </header>
 
-    <div class="node-description">
+    <div
+      v-if="node.description != null"
+      class="node-description"
+    >
       {{ node.description }}
     </div>
 
@@ -95,6 +100,10 @@ export default {
       <div
         :key="event.title"
         class="node-event"
+        :class="{
+          [event.color]: true,
+          [event.type]: true,
+        }"
         @mouseover="mouseoverEvent(event)"
         @mouseout="mouseoutEvent(event)"
       >
@@ -106,6 +115,30 @@ export default {
           <div class="variable variable-right bool true">T</div>
         </template>
         <!-- End inline bool -->
+
+        <!-- Output -->
+        <template v-if="event.type === 'output'">
+          <div
+            class="output-attachment"
+            :class="{
+              [event.color]: true,
+              connected: event.connection,
+            }"
+          ></div>
+        </template>
+        <!-- End output -->
+
+        <!-- Input -->
+        <template v-if="event.type === 'input'">
+          <div
+            class="input-attachment"
+            :class="{
+              [event.color]: true,
+              connected: event.connection,
+            }"
+          ></div>
+        </template>
+        <!-- End input -->
 
         <!-- Flash message -->
         <template v-if="event.type === 'flash-message'">
@@ -127,15 +160,24 @@ export default {
   </vue-draggable-resizable>
 </template>
 
-<style lang="scss" scoped>
-  .draggable {
-    overflow: hidden;
-    border-radius: 0.3rem;
-    box-shadow: 0rem 0rem 0rem 0.2rem rgba(0, 0, 0, 0.4);
+<style lang="scss">
+  .flow-grid-node {
+    border-radius: 0.4rem;
+    $border: 0rem 0rem 0rem 0.2rem hsla(0, 0%, 0%, 0.5);
+
+    box-shadow: $border;
+    background-color: hsla(0, 0%, 10%, 0.65);
+
+    &:hover {
+      background-color: hsla(0, 0%, 10%, 0.7);
+    }
 
     &.active {
-      box-shadow: 0rem 0rem 0rem 0.1rem rgba(0, 0, 0, 0.4),
-        0rem 0rem 0rem 0.3rem #4caf50;
+      $border: 0rem 0rem 0rem 0.2rem hsla(0, 0%, 100%, 0.7);
+      $dropshadow: 0rem 0.1rem 0.3rem 0.1rem hsl(0, 0%, 0%);
+
+      box-shadow: $border, $dropshadow;
+      background-color: hsla(0, 0%, 0%, 0.7);
     }
   }
 
@@ -143,7 +185,7 @@ export default {
   .node-description,
   .node-event {
     height: 3rem;
-    padding: 0.8rem;
+    padding: 0.8rem 1.4rem;
 
     .icon {
       font-size: 1.8rem;
@@ -152,34 +194,64 @@ export default {
   }
 
   .node-header {
+    --background: #29B6F6;
     display: flex;
+    height: 2.8rem;
+    margin: 0.1rem;
     align-items: center;
+    justify-content: center;
     overflow: hidden;
-    background-color: #29b6f6;
+    border-radius: 0.3rem;
+    font-size: 1.2rem;
+    text-shadow: 0 0.1rem 0.1rem hsla(0, 0%, 0%, 0.7);
+    box-shadow: inset 0rem 0.1rem 0rem 0rem hsla(0, 0%, 100%, 0.3),
+      0rem 0rem 0rem 0.1rem hsla(0, 0%, 0%, 0.5);
+    color: #efefef;
+    background-image: linear-gradient(0deg, transparent,
+      hsla(0, 0%, 0%, 0.2) 50%,
+      hsla(0, 0%, 0%, 0) 51%),
+      radial-gradient(80% 100% at 50% 0, var(--background), transparent);
   }
 
   .node-description {
     height: 6rem;
-    overflow: scroll;
-    background-color: #b3e5fc;
+    overflow: hidden;
+    font-size: 1.2rem;
+    color: #efefef;
+    cursor: default;
   }
 
   .node-event {
     position: relative;
     display: flex;
     align-items: center;
-    background-color: #b0bec5;
-    box-shadow: inset 0 -0.1rem 0 rgba(0, 0, 0, 0.2);
+    font-size: 1.2rem;
+    color: #efefef;
+    cursor: default;
+    --background: #81C784;
+    background-image: linear-gradient(0deg, transparent,
+      hsla(0, 0%, 0%, 0.2) 50%,
+      hsla(0, 0%, 0%, 0) 51%),
+      radial-gradient(80% 100% at 50% 0, var(--background), transparent);
+    text-shadow: 0 0.1rem 0.1rem hsla(0, 0%, 0%, 0.7);
+    box-shadow: inset 0rem 0rem 0rem 0.1rem hsla(0, 0%, 0%, 0.3);
 
-    &:hover {
-      background-color: #78909c;
+    .active &:hover {
+      background-color: hsla(0, 0%, 100%, 0.3);
     }
-  }
 
-  .node-handle {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+    &.input {
+      background-image: linear-gradient(0deg, transparent,
+        hsla(0, 0%, 0%, 0.2) 50%,
+        hsla(0, 0%, 0%, 0) 51%),
+        radial-gradient(80% 100% at 0% 0%, var(--background), transparent);
+    }
+    &.output {
+      background-image: linear-gradient(0deg, transparent,
+        hsla(0, 0%, 0%, 0.2) 50%,
+        hsla(0, 0%, 0%, 0) 51%),
+        radial-gradient(80% 100% at 100% 0%, var(--background), transparent);
+    }
   }
 
   .variable {
@@ -226,8 +298,149 @@ export default {
   .variable-left {
     left: -2.5rem;
   }
-
   .variable-right {
     right: -2.5rem;
+  }
+
+  .input-attachment,
+  .output-attachment {
+    position: absolute;
+    box-shadow: 0rem 0.1rem 0.1rem hsla(0, 0%, 0%, 0.5);
+    border: 0.4rem solid var(--background);
+    border-radius: 100%;
+    width: 1.8rem;
+    height: 1.8rem;
+    --background: hsla(0, 0%, 100%, 0.5);
+    transform: scale(0.8);
+    opacity: 0.6;
+
+    &:after {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 0.3rem;
+      width: 0.6rem;
+      height: 0.4rem;
+      background-color: var(--background);
+    }
+
+    &.connected {
+      background-color: var(--background);
+
+      &:after {
+        display: none;
+      }
+    }
+    &.connected,
+    .active .node-event:hover & {
+      transform: scale(1);
+      opacity: 1;
+      cursor: grab;
+    }
+  }
+
+  .input-attachment {
+    left: -0.9rem;
+
+    &:after {
+      left: -0.8rem;
+    }
+  }
+
+  .output-attachment {
+    right: -0.9rem;
+
+    &:after {
+      left: 1.2rem;
+    }
+
+    .active .node-event:hover & {
+      cursor: grab;
+    }
+  }
+
+  .red {
+    --background: #ef5350;
+  }
+  .pink {
+    --background: #EC407A;
+  }
+  .purple {
+    --background: #AB47BC;
+  }
+  .deep-purple {
+    --background: #7E57C2;
+  }
+  .indigo {
+    --background: #5C6BC0;
+  }
+  .blue {
+    --background: #42A5F5;
+  }
+  .light-blue {
+    --background: #29B6F6;
+  }
+  .cyan {
+    --background: #26C6DA;
+  }
+  .teal {
+    --background: #26A69A;
+  }
+  .green {
+    --background: #66BB6A;
+  }
+  .light-green {
+    --background: #9CCC65;
+  }
+  .lime {
+    --background: #D4E157;
+  }
+  .yellow {
+    --background: #FFEE58;
+  }
+  .amber {
+    --background: #FFCA28;
+  }
+  .orange {
+    --background: #FFA726;
+  }
+  .deep-orange {
+    --background: #FF7043;
+  }
+  .brown {
+    --background: #8D6E63;
+  }
+  .grey {
+    --background: #BDBDBD;
+  }
+  .blue-grey {
+    --background: #78909C;
+  }
+
+  .handle {
+    position: absolute;
+    top: 1.7rem;
+    width: 1rem;
+    height: 2.6rem;
+    margin-top: -1.5rem;
+    overflow: hidden;
+    background-color: hsla(0, 0%, 100%, 0.6);
+
+    &:hover {
+      background-color: hsla(0, 0%, 100%, 0.9);
+    }
+
+    &.handle-ml {
+      left: -1.2rem;
+      border-radius: 0.2rem 0 0 0.2rem;
+      box-shadow: -0.1rem 0.1rem 0rem hsla(0, 0%, 0%, 0.2);
+      cursor: w-resize;
+    }
+    &.handle-mr {
+      right: -1.2rem;
+      border-radius: 0 0.2rem 0.2rem 0;
+      box-shadow: 0.1rem 0.1rem 0rem hsla(0, 0%, 0%, 0.2);
+      cursor: e-resize;
+    }
   }
 </style>

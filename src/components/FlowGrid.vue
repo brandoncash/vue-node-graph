@@ -20,7 +20,7 @@ export default {
   methods: {
     rejiggerNodes() {
       const rightNow = new Date();
-      if (this.timeSinceLastRejigger > rightNow - 50) {
+      if (this.timeSinceLastRejigger > rightNow - 25) {
         return;
       }
       this.timeSinceLastRejigger = rightNow;
@@ -53,31 +53,34 @@ export default {
           const toNodeName = connection.toNode;
           const toNode = this.nodes[toNodeName];
           const toNodeX = toNode.dimensions.x * 30;
+          const toNodeY = (toNode.dimensions.y * 30)
+            + (connection.toNodeIndex ? connection.toNodeIndex * 30 : 0) // If there's a node index
+            + 15; // half of a unit offset to center it
 
           // The beginning point
           if (connection.direction === 'left') {
             newLine.points[0].direction = 'left';
-            newLine.points[0].x = fromNodeX;
+            newLine.points[0].x = fromNodeX + 15; // half a unit offset
             newLine.points[0].y = (
               (currentNode.dimensions.y * 30)
+              + (currentNode.description != null ? 60 : 0) // 2 units tall for description
               + ((eventIndex + 1) * 30)
-              + 60 // 2 units tall for description
               + 15 // half of a unit offset to center it
             );
           } else {
             newLine.points[0].direction = 'right';
             newLine.points[0].x = (
-              (fromNodeX)
+              (fromNodeX - 15)
               + (currentNode.dimensions.width * 30)
             );
             newLine.points[0].y = (
               (currentNode.dimensions.y * 30)
+              + (currentNode.description != null ? 60 : 0) // 2 units tall for description
               + ((eventIndex + 1) * 30)
-              + 60 // 2 units tall for description
               + 15 // half of a unit offset to center it
             );
           }
-          // End beginning point
+          // / Beginning point
 
           // The end point
           // Automatically detect attach direction
@@ -94,10 +97,7 @@ export default {
             newLine.points[1].x = toNodeX - 15;
           }
 
-          newLine.points[1].y = (
-            (toNode.dimensions.y * 30)
-            + 15
-          );
+          newLine.points[1].y = toNodeY;
 
           newLine.strokeColor = event.lineStrokeColor || 'default';
           newLine.ref = `Line:${fromNodeName}->${toNodeName}`;
@@ -108,7 +108,7 @@ export default {
 
           this.lines[newLine.id] = newLine;
         });
-        // End end point ;)
+        // / End point
       });
     },
 
@@ -121,8 +121,8 @@ export default {
     resizeNode(event) {
       this.nodes[event.nodeName].dimensions.x = event.x / 30;
       this.nodes[event.nodeName].dimensions.y = event.y / 30;
-      this.nodes[event.nodeName].width = event.width / 30;
-      this.nodes[event.nodeName].height = event.height / 30;
+      this.nodes[event.nodeName].dimensions.width = event.width / 30;
+      this.nodes[event.nodeName].dimensions.height = event.height / 30;
       this.rejiggerNodes();
     },
 
@@ -152,10 +152,13 @@ export default {
   data() {
     return {
       lines: {},
-      lineColors: {
+      lineColors: { // FIXME: import these; shared in FlowGridLine
         default: '#4caf50',
+        green: '#4caf50',
         red: '#e53935',
         orange: '#ffb300',
+        deepOrange: '#FF7043',
+        amber: '#FFCA28',
       },
       timeSinceLastRejigger: 0,
       activeNode: '',
@@ -175,12 +178,13 @@ export default {
     >
       <svg
         width="2000"
-        height="2000"
+        height="1000"
         ref="flowchart-lines"
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
           <template v-for="(color, colorName) in lineColors">
+            <!-- Start dot marker -->
             <marker
               :key="`start-dot-${colorName}`"
               :id="`start-dot-${colorName}`"
@@ -197,7 +201,9 @@ export default {
                 :style="`fill: ${color};`"
               />
             </marker>
+            <!-- / Start dot marker -->
 
+            <!-- End arrow marker -->
             <marker
               :key="`end-arrow-${colorName}`"
               :id="`end-arrow-${colorName}`"
@@ -217,8 +223,10 @@ export default {
                 :style="`fill: ${color};`"
               />
             </marker>
+            <!-- / End arrow marker -->
           </template>
 
+          <!-- Dropshadow for text and lines -->
           <filter id="dropshadow"
             x="-40%" y="-40%"
             width="180%" height="180%"
@@ -228,6 +236,7 @@ export default {
             <feGaussianBlur result="blurOut" in="offOut" stdDeviation="1" />
             <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
           </filter>
+          <!-- / Dropshadow -->
         </defs>
 
         <template v-for="(line, lineName) in lines">
@@ -263,17 +272,17 @@ export default {
     width: 100%;
     height: 100%;
     overflow: scroll;
-    cursor: -webkit-grab;
+    cursor: grab;
 
     &:active {
-      cursor: -webkit-grabbing;
+      cursor: grabbing;
     }
   }
 
   .flowchart {
     position: relative;
     width: 200rem;
-    height: 200rem;
+    height: 100rem;
     background-size: 3rem 3rem;
     background-repeat: repeat;
     background-image: linear-gradient(0deg,

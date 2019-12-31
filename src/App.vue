@@ -1,6 +1,6 @@
 <script>
 import FlowGrid from './components/FlowGrid.vue';
-import sampleNodes from './sample-nodes.json';
+import sampleNodes from './node-links.json';
 
 export default {
   name: 'logic-view',
@@ -58,8 +58,9 @@ export default {
   }
 
   body {
-    user-select: none;
+    margin: 0;
     font-family: 'Roboto', Helvetica, Arial, sans-serif;
+    user-select: none;
   }
 
   #app {
