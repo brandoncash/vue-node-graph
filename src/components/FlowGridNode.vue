@@ -11,7 +11,7 @@ export default {
   methods: {
     onResize(x, y, width, height) {
       const event = {
-        nodeName: this.node.title,
+        nodeName: this.node.key,
         x,
         y,
         width,
@@ -21,8 +21,13 @@ export default {
     },
 
     onDrag(x, y) {
+      // Don't proceed if we haven't dragged it far enough to snap
+      if ((x / 30) === this.node.dimensions.x && (y / 30) === this.node.dimensions.y) {
+        return;
+      }
+
       const event = {
-        nodeName: this.node.title,
+        nodeName: this.node.key,
         x,
         y,
       };
@@ -40,19 +45,21 @@ export default {
     },
 
     mouseoverEvent(nodeEvent) {
-      const event = {
-        fromNode: `${this.node.title}/${nodeEvent.title}`,
-        toNode: nodeEvent.connection.toNode,
-      };
-      this.$emit('mouseoverEvent', event);
+      console.log('mouseover', nodeEvent);
+      // const event = {
+      //   fromNode: `${this.node.title}/${nodeEvent.title}`,
+      //   toNode: nodeEvent.connection.toNode,
+      // };
+      // this.$emit('mouseoverEvent', event);
     },
 
     mouseoutEvent(nodeEvent) {
-      const event = {
-        fromNode: `${this.node.title}/${nodeEvent.title}`,
-        toNode: nodeEvent.connection.toNode,
-      };
-      this.$emit('mouseoutEvent', event);
+      console.log('mouseOut', nodeEvent);
+      // const event = {
+      //   fromNode: `${this.node.title}/${nodeEvent.title}`,
+      //   toNode: nodeEvent.connection.toNode,
+      // };
+      // this.$emit('mouseoutEvent', event);
     },
   },
 
@@ -66,11 +73,10 @@ export default {
 <template>
   <vue-draggable-resizable
     class="flow-grid-node"
-    :active="true"
     :draggable="true"
     :grid="[30,30]"
     :w="node.dimensions.width * 30"
-    :minWidth="6 * 30"
+    :minWidth="4 * 30"
     :maxWidth="12 * 30"
     :h="30 + (node.description != null ? 60 : 0) + (node.events.length * 30)"
     :x="node.dimensions.x * 30"
@@ -115,6 +121,22 @@ export default {
           <div class="variable variable-right bool true">T</div>
         </template>
         <!-- End inline bool -->
+
+        <!-- Number -->
+        <template v-if="event.type === 'number'">
+          <input
+            type="number"
+            :value="event.title"
+          />
+          <div
+            class="output-attachment"
+            :class="{
+              [event.color]: true,
+              connected: event.connection,
+            }"
+          ></div>
+        </template>
+        <!-- End number -->
 
         <!-- Output -->
         <template v-if="event.type === 'output'">
@@ -247,6 +269,7 @@ export default {
         radial-gradient(80% 100% at 0% 0%, var(--background), transparent);
     }
     &.output {
+      justify-content: flex-end;
       background-image: linear-gradient(0deg, transparent,
         hsla(0, 0%, 0%, 0.2) 50%,
         hsla(0, 0%, 0%, 0) 51%),
@@ -441,6 +464,23 @@ export default {
       border-radius: 0 0.2rem 0.2rem 0;
       box-shadow: 0.1rem 0.1rem 0rem hsla(0, 0%, 0%, 0.2);
       cursor: e-resize;
+    }
+  }
+
+  input[type="text"],
+  input[type="number"] {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-width: 0;
+    padding: 0 1.3rem;
+    font-size: 1.2rem;
+
+    .active & {
+      display: block;
     }
   }
 </style>

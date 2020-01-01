@@ -1,6 +1,6 @@
 {
     "Texture 1": {
-        "title": "Texture 1",
+        "title": "Texture",
         "color": "light-blue",
         "dimensions": {
             "x": 4,
@@ -14,7 +14,7 @@
                 "color": "amber",
                 "lineStrokeColor": "amber",
                 "connection": {
-                    "toNode": "Multiply",
+                    "toNode": "Multiply 1",
                     "toNodeIndex": 1
                 }
             },
@@ -45,7 +45,7 @@
         ]
     },
     "Texture 2": {
-        "title": "Texture 2",
+        "title": "Texture",
         "color": "light-blue",
         "dimensions": {
             "x": 4,
@@ -59,8 +59,10 @@
                 "color": "amber",
                 "lineStrokeColor": "amber",
                 "connection": {
-                    "toNode": "Multiply",
-                    "toNodeIndex": 2
+                    "toNode": "Multiply 1",
+                    "toNodeIndex": 2,
+                    "startMarkerType": "arrow",
+                    "endMarkerType": "arrow"
                 }
             },
             {
@@ -89,7 +91,7 @@
             }
         ]
     },
-    "Multiply": {
+    "Multiply 1": {
         "title": "Multiply",
         "color": "teal",
         "dimensions": {
@@ -120,7 +122,7 @@
         ]
     },
     "Multiply 2": {
-        "title": "Multiply 2",
+        "title": "Multiply",
         "color": "teal",
         "dimensions": {
             "x": 24,
@@ -160,7 +162,7 @@
         "events": [
             {
                 "title": "3",
-                "type": "output",
+                "type": "number",
                 "color": "blue-grey",
                 "connection": {
                     "toNode": "Multiply 2",
@@ -170,7 +172,7 @@
         ]
     },
     "Texture 3": {
-        "title": "Texture 3",
+        "title": "Texture",
         "color": "light-blue",
         "dimensions": {
             "x": 22,

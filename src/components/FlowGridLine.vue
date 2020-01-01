@@ -5,6 +5,15 @@ export default {
   components: {
   },
 
+  computed: {
+    startMarker() {
+      return `url(#marker-${this.line.startMarkerType}-${this.line.strokeColor})`;
+    },
+    endMarker() {
+      return `url(#marker-${this.line.endMarkerType}-${this.line.strokeColor})`;
+    },
+  },
+
   methods: {
     generateBezierLine(line) {
       let beginning = '';
@@ -56,7 +65,7 @@ export default {
 
       if (line.points[1].direction === 'left') {
         end = `
-          L ${line.points[1].x - 7} ${line.points[1].y}
+          L ${line.points[1].x + 15} ${line.points[1].y}
         `;
       } else {
         end = `
@@ -114,8 +123,8 @@ export default {
       :stroke="lineColors[line.strokeColor]"
       stroke-width="3"
       fill="transparent"
-      :marker-start="`url(#start-dot-${line.strokeColor})`"
-      :marker-end="`url(#end-arrow-${line.strokeColor})`"
+      :marker-start="startMarker"
+      :marker-end="endMarker"
       :class="{ highlighted: line.active }"
     />
 
@@ -124,7 +133,7 @@ export default {
         :xlink:href="`#${line.id}`"
         fill="#cfd8dc"
       >
-        {{ line.text }} {{ line.active }}
+        {{ line.text }}
       </textPath>
     </text>
   </g>

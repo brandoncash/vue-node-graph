@@ -3,17 +3,47 @@ import FlowGridLine from './FlowGridLine.vue';
 import FlowGridNode from './FlowGridNode.vue';
 
 export default {
-  props: [
-    'nodes',
-    'backgroundColor',
-  ],
-
   components: {
     FlowGridLine,
     FlowGridNode,
   },
 
+  props: {
+    nodeData: Object,
+    backgroundColor: String,
+  },
+
+  data() {
+    return {
+      nodes: {},
+      lines: {},
+      lineColors: { // FIXME: import these; shared in FlowGridLine
+        default: '#4caf50',
+        green: '#4caf50',
+        red: '#e53935',
+        orange: '#ffb300',
+        deepOrange: '#FF7043',
+        amber: '#FFCA28',
+      },
+      timeSinceLastRejigger: 0,
+      activeNode: '',
+    };
+  },
+
+  computed: {
+    nodeKeys() {
+      return Object.keys(this.nodeData);
+    },
+  },
+
   mounted() {
+    Object.keys(this.nodeData).forEach((nodeKey) => {
+      this.nodes[nodeKey] = {
+        ...this.nodeData[nodeKey],
+        key: nodeKey,
+      };
+    });
+
     this.rejiggerNodes();
   },
 
@@ -25,22 +55,28 @@ export default {
       }
       this.timeSinceLastRejigger = rightNow;
 
-      // FIXME: debugging only
+      // FIXME: resetting lines is necessary to refresh; poor update pattern
       this.lines = {};
 
-      const nodes = Object.keys(this.nodes);
-      nodes.forEach((nodeKey) => {
+      this.nodeKeys.forEach((nodeKey) => {
         const currentNode = this.nodes[nodeKey];
 
         currentNode.events.forEach((event, eventIndex) => {
           const { connection } = event;
 
+          // No connection available
           if (typeof (connection) === 'undefined') {
+            return;
+          }
+          // This is an incoming connection
+          if (connection === true) {
             return;
           }
 
           const newLine = {
             strokeColor: 'default',
+            startMarkerType: connection.startMarkerType,
+            endMarkerType: connection.endMarkerType,
             points: [
               { x: 0, y: 0, direction: 'left' },
               { x: 0, y: 0, direction: 'right' },
@@ -53,9 +89,17 @@ export default {
           const toNodeName = connection.toNode;
           const toNode = this.nodes[toNodeName];
           const toNodeX = toNode.dimensions.x * 30;
-          const toNodeY = (toNode.dimensions.y * 30)
-            + (connection.toNodeIndex ? connection.toNodeIndex * 30 : 0) // If there's a node index
-            + 15; // half of a unit offset to center it
+          const toNodeY = (
+            (toNode.dimensions.y * 30)
+            + (connection.toNodeIndex * 30) // + node index offset
+            + 15 // + half of a unit offset to center it
+          );
+
+          // Set connection on the receiving node's end
+          // FIXME: this requires moving the node to refresh; set a better way
+          if (connection.toNodeIndex) {
+            toNode.events[connection.toNodeIndex - 1].connection = true;
+          }
 
           // The beginning point
           if (connection.direction === 'left') {
@@ -64,8 +108,8 @@ export default {
             newLine.points[0].y = (
               (currentNode.dimensions.y * 30)
               + (currentNode.description != null ? 60 : 0) // 2 units tall for description
-              + ((eventIndex + 1) * 30)
-              + 15 // half of a unit offset to center it
+              + ((eventIndex + 1) * 30) // + event index offset
+              + 15 // + half of a unit offset to center it
             );
           } else {
             newLine.points[0].direction = 'right';
@@ -76,8 +120,8 @@ export default {
             newLine.points[0].y = (
               (currentNode.dimensions.y * 30)
               + (currentNode.description != null ? 60 : 0) // 2 units tall for description
-              + ((eventIndex + 1) * 30)
-              + 15 // half of a unit offset to center it
+              + ((eventIndex + 1) * 30) // + event index offset
+              + 15 // + half of a unit offset to center it
             );
           }
           // / Beginning point
@@ -101,8 +145,9 @@ export default {
 
           newLine.strokeColor = event.lineStrokeColor || 'default';
           newLine.ref = `Line:${fromNodeName}->${toNodeName}`;
-          newLine.id = `Line--${fromNodeName}--${toNodeName}`;
-          // newLine.text = toNodeName;
+          const toNodeIndex = event.connection.toNodeIndex || 0;
+          newLine.id = `Line--${fromNodeName}--${toNodeName}-${toNodeIndex}`;
+          newLine.text = toNodeName;
           newLine.text = newLine.id;
           newLine.active = false;
 
@@ -137,32 +182,18 @@ export default {
     },
 
     mouseoverEvent(event) {
-      const lineName = `Line--${event.fromNode}--${event.toNode}`;
-      this.lines[lineName].active = true;
-      console.log('activated', this.lines[lineName]);
-      this.lines[lineName].strokeColor = 'red';
+      console.log('mouseover', event);
+      // const lineName = `Line--${event.fromNode}--${event.toNode}`;
+      // this.lines[lineName].active = true;
+      // console.log('activated', this.lines[lineName]);
+      // this.lines[lineName].strokeColor = 'red';
     },
 
     mouseoutEvent(event) {
-      const lineName = `Line--${event.fromNode}--${event.toNode}`;
-      this.lines[lineName].active = false;
+      console.log('mouseout', event);
+      // const lineName = `Line--${event.fromNode}--${event.toNode}`;
+      // this.lines[lineName].active = false;
     },
-  },
-
-  data() {
-    return {
-      lines: {},
-      lineColors: { // FIXME: import these; shared in FlowGridLine
-        default: '#4caf50',
-        green: '#4caf50',
-        red: '#e53935',
-        orange: '#ffb300',
-        deepOrange: '#FF7043',
-        amber: '#FFCA28',
-      },
-      timeSinceLastRejigger: 0,
-      activeNode: '',
-    };
   },
 };
 </script>
@@ -184,15 +215,15 @@ export default {
       >
         <defs>
           <template v-for="(color, colorName) in lineColors">
-            <!-- Start dot marker -->
+            <!-- Dot marker -->
             <marker
-              :key="`start-dot-${colorName}`"
-              :id="`start-dot-${colorName}`"
+              :key="`marker-dot-${colorName}`"
+              :id="`marker-dot-${colorName}`"
               markerWidth="6"
               markerHeight="6"
               refX="3"
               refY="3"
-              orient="auto"
+              orient="auto-start-reverse"
             >
               <circle
                 cx="3"
@@ -201,17 +232,17 @@ export default {
                 :style="`fill: ${color};`"
               />
             </marker>
-            <!-- / Start dot marker -->
+            <!-- / Dot marker -->
 
-            <!-- End arrow marker -->
+            <!-- Arrow marker -->
             <marker
-              :key="`end-arrow-${colorName}`"
-              :id="`end-arrow-${colorName}`"
+              :key="`marker-arrow-${colorName}`"
+              :id="`marker-arrow-${colorName}`"
               markerWidth="6"
               markerHeight="6"
-              refX="0"
+              refX="6"
               refY="3"
-              orient="auto"
+              orient="auto-start-reverse"
             >
               <path
                 d="
@@ -223,7 +254,29 @@ export default {
                 :style="`fill: ${color};`"
               />
             </marker>
-            <!-- / End arrow marker -->
+            <!-- / Arrow marker -->
+
+            <!-- Small arrow marker -->
+            <marker
+              :key="`marker-small-arrow-${colorName}`"
+              :id="`marker-small-arrow-${colorName}`"
+              markerWidth="3"
+              markerHeight="3"
+              refX="3"
+              refY="1.5"
+              orient="auto-start-reverse"
+            >
+              <path
+                d="
+                  M 0, 0
+                  L 0, 3
+                  L 3, 1.5
+                  L 0, 0
+                "
+                :style="`fill: ${color};`"
+              />
+            </marker>
+            <!-- / Arrow marker -->
           </template>
 
           <!-- Dropshadow for text and lines -->
@@ -245,14 +298,12 @@ export default {
             :line="line"
           >
           </flow-grid-line>
-          {{ lineName }}
-          {{ line }}
         </template>
       </svg>
 
-      <template v-for="node in nodes">
+      <template v-for="(node, nodeKey) in nodes">
         <flow-grid-node
-          :key="node.title"
+          :key="nodeKey"
           :node="node"
           @resizeNode="resizeNode"
           @dragNode="dragNode"

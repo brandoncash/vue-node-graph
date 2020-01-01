@@ -23,13 +23,7 @@ export default {
 
   data() {
     return {
-      nodes: sampleNodes,
-      activeNode: '',
-      initializeItems: [
-        { title: 'Load state from storage', subtitle: "Get <span class='blue--text'>localStorage</span> as <span class='green--text'>state</span>" },
-        { divider: true, inset: true },
-        { title: 'Set home route', subtitle: "Set <span class='blue--text'>path.route</span> to <span class='green--text'>'/'</span>" },
-      ],
+      nodeData: sampleNodes,
     };
   },
 };
@@ -38,7 +32,7 @@ export default {
 <template>
   <div id="app">
     <flow-grid
-      :nodes="nodes"
+      :nodeData="nodeData"
       backgroundColor="#3e8cdc"
       @nodeActivated="nodeActivated"
       @nodeDeactivated="nodeDeactivated"
