@@ -1,0 +1,281 @@
+{
+    "nodes": {
+        "Texture 1": {
+            "title": "Texture",
+            "color": "light-blue",
+            "dimensions": {
+                "x": 4,
+                "y": 4,
+                "width": 6
+            },
+            "links": [
+                {
+                    "title": "Image",
+                    "type": "output",
+                    "color": "amber",
+                    "lineStrokeColor": "amber",
+                    "connection": {
+                        "receivingNode": "Multiply 1",
+                        "receivingNodeIndex": 1
+                    }
+                },
+                {
+                    "title": "Red",
+                    "type": "output",
+                    "color": "red",
+                    "lineStrokeColor": "red"
+                },
+                {
+                    "title": "Green",
+                    "type": "output",
+                    "color": "green",
+                    "lineStrokeColor": "green"
+                },
+                {
+                    "title": "Blue",
+                    "type": "output",
+                    "color": "blue",
+                    "lineStrokeColor": "blue"
+                },
+                {
+                    "title": "Gray",
+                    "type": "output",
+                    "color": "grey",
+                    "lineStrokeColor": "grey"
+                }
+            ]
+        },
+        "Texture 2": {
+            "title": "Texture",
+            "color": "light-blue",
+            "dimensions": {
+                "x": 4,
+                "y": 12,
+                "width": 6
+            },
+            "links": [
+                {
+                    "title": "Image",
+                    "type": "output",
+                    "color": "amber",
+                    "lineStrokeColor": "amber",
+                    "connection": {
+                        "receivingNode": "Multiply 1",
+                        "receivingNodeIndex": 2
+                    }
+                },
+                {
+                    "title": "Red",
+                    "type": "output",
+                    "color": "red",
+                    "lineStrokeColor": "red"
+                },
+                {
+                    "title": "Green",
+                    "type": "output",
+                    "color": "green",
+                    "lineStrokeColor": "green"
+                },
+                {
+                    "title": "Blue",
+                    "type": "output",
+                    "color": "blue",
+                    "lineStrokeColor": "blue"
+                },
+                {
+                    "title": "Gray",
+                    "type": "output",
+                    "color": "grey",
+                    "lineStrokeColor": "grey"
+                }
+            ]
+        },
+        "Multiply 1": {
+            "title": "Multiply",
+            "color": "teal",
+            "dimensions": {
+                "x": 14,
+                "y": 6,
+                "width": 4
+            },
+            "links": [
+                {
+                    "title": "A",
+                    "type": "input",
+                    "color": "grey"
+                },
+                {
+                    "title": "B",
+                    "type": "input",
+                    "color": "grey"
+                },
+                {
+                    "title": "A * B",
+                    "type": "output",
+                    "color": "blue-grey",
+                    "lineStrokeColor": "blueGrey",
+                    "connection": {
+                        "receivingNode": "Multiply 2",
+                        "receivingNodeIndex": 1
+                    }
+                }
+            ]
+        },
+        "Number": {
+            "title": "Number",
+            "color": "deep-orange",
+            "dimensions": {
+                "x": 14,
+                "y": 12,
+                "width": 4
+            },
+            "links": [
+                {
+                    "title": "3",
+                    "type": "number",
+                    "color": "blue-grey",
+                    "lineStrokeColor": "blueGrey",
+                    "connection": {
+                        "receivingNode": "Multiply 2",
+                        "receivingNodeIndex": 2
+                    }
+                }
+            ]
+        },
+        "Multiply 2": {
+            "title": "Multiply",
+            "color": "teal",
+            "dimensions": {
+                "x": 22,
+                "y": 8,
+                "width": 4
+            },
+            "links": [
+                {
+                    "title": "A",
+                    "type": "input",
+                    "color": "grey"
+                },
+                {
+                    "title": "B",
+                    "type": "input",
+                    "color": "grey"
+                },
+                {
+                    "title": "A * B",
+                    "type": "output",
+                    "color": "blue-grey",
+                    "lineStrokeColor": "blueGrey",
+                    "connection": {
+                        "receivingNode": "Output Material",
+                        "receivingNodeIndex": 1
+                    }
+                }
+            ]
+        },
+        "Texture 3": {
+            "title": "Texture",
+            "color": "light-blue",
+            "dimensions": {
+                "x": 20,
+                "y": 14,
+                "width": 6
+            },
+            "links": [
+                {
+                    "title": "Image",
+                    "type": "output",
+                    "color": "amber",
+                    "lineStrokeColor": "amber",
+                    "connection": {
+                        "receivingNode": "Output Material",
+                        "receivingNodeIndex": 8
+                    }
+                },
+                {
+                    "title": "Red",
+                    "type": "output",
+                    "color": "red",
+                    "lineStrokeColor": "red"
+                },
+                {
+                    "title": "Green",
+                    "type": "output",
+                    "color": "green",
+                    "lineStrokeColor": "green"
+                },
+                {
+                    "title": "Blue",
+                    "type": "output",
+                    "color": "blue",
+                    "lineStrokeColor": "blue"
+                },
+                {
+                    "title": "Gray",
+                    "type": "output",
+                    "color": "grey",
+                    "lineStrokeColor": "grey"
+                }
+            ]
+        },
+        "Output Material": {
+            "title": "Output Material",
+            "color": "brown",
+            "dimensions": {
+                "x": 30,
+                "y": 6,
+                "width": 6
+            },
+            "links": [
+                {
+                    "title": "Base Color",
+                    "type": "input",
+                    "color": "grey",
+                    "lineStrokeColor": "grey"
+                },
+                {
+                    "title": "Metallic",
+                    "type": "input",
+                    "color": "grey",
+                    "lineStrokeColor": "grey"
+                },
+                {
+                    "title": "Specular",
+                    "type": "input",
+                    "color": "grey",
+                    "lineStrokeColor": "grey"
+                },
+                {
+                    "title": "Roughness",
+                    "type": "input",
+                    "color": "grey",
+                    "lineStrokeColor": "grey"
+                },
+                {
+                    "title": "Emissive Color",
+                    "type": "input",
+                    "color": "grey",
+                    "lineStrokeColor": "grey"
+                },
+                {
+                    "title": "Opacity",
+                    "type": "input",
+                    "color": "grey",
+                    "lineStrokeColor": "grey"
+                },
+                {
+                    "title": "Opacity Mask",
+                    "type": "input",
+                    "color": "grey",
+                    "lineStrokeColor": "grey"
+                },
+                {
+                    "title": "Normal",
+                    "type": "input",
+                    "color": "grey",
+                    "lineStrokeColor": "grey"
+                }
+            ]
+        }
+    }
+}

@@ -1,9 +1,11 @@
 <script>
 import FlowGrid from './components/FlowGrid.vue';
-import sampleNodes from './node-links.json';
+import exampleStateMachine from './examples/state-machine.json';
+import exampleShader from './examples/shader.json';
+import exampleLineTest from './examples/line-test.json';
 
 export default {
-  name: 'logic-view',
+  name: 'vue-node-graph',
 
   components: {
     FlowGrid,
@@ -23,7 +25,12 @@ export default {
 
   data() {
     return {
-      nodeData: sampleNodes,
+      exampleGraphs: {
+        'State machine': exampleStateMachine,
+        Shader: exampleShader,
+        'Line test': exampleLineTest,
+      },
+      currentGraph: 'Line test',
     };
   },
 };
@@ -31,8 +38,19 @@ export default {
 
 <template>
   <div id="app">
+    <select
+      v-model="currentGraph"
+      id="graph-selector"
+    >
+      <option
+        v-for="(exampleGraph, graphName) in exampleGraphs"
+        :key="graphName"
+        :value="graphName"
+      >{{ graphName }}</option>
+    </select>
+
     <flow-grid
-      :nodeData="nodeData"
+      :nodeData="exampleGraphs[currentGraph].nodes"
       backgroundColor="#3e8cdc"
       @nodeActivated="nodeActivated"
       @nodeDeactivated="nodeDeactivated"
@@ -45,6 +63,10 @@ export default {
 
   * {
     box-sizing: border-box;
+  }
+
+  .icon {
+    font-family: 'Material Icons';
   }
 
   html {
@@ -65,5 +87,12 @@ export default {
   .split-pane {
     width: 100%;
     height: 100%;
+  }
+
+  #graph-selector {
+    position: fixed;
+    top: 3vw;
+    left: 3vw;
+    z-index: 100;
   }
 </style>

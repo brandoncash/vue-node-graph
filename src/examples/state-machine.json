@@ -1,0 +1,207 @@
+{
+    "nodes": {
+        "Initialize": {
+            "title": "Initialize",
+            "color": "teal",
+            "dimensions": {
+                "x": 2,
+                "y": 2,
+                "width": 6
+            },
+            "links": [
+                {
+                    "title": "Finished",
+                    "type": "default",
+                    "color": "green",
+                    "lineStrokeColor": "green",
+                    "connection": {
+                        "showText": true,
+                        "direction": "right",
+                        "receivingNode": "Authentication",
+                        "startMarkerType": "dot",
+                        "endMarkerType": "arrow"
+                    }
+                }
+            ]
+        },
+        "Authentication": {
+            "title": "Authentication",
+            "description": "Checks if the user needs to authenticate",
+            "color": "pink",
+            "dimensions": {
+                "x": 18,
+                "y": 3,
+                "width": 6
+            },
+            "links": [
+                {
+                    "title": "No credentials found",
+                    "type": "default",
+                    "color": "red",
+                    "lineStrokeColor": "red",
+                    "connection": {
+                        "direction": "left",
+                        "receivingNode": "Show log in screen",
+                        "startMarkerType": "dot",
+                        "endMarkerType": "arrow"
+                    }
+                },
+                {
+                    "title": "Found stored credentials",
+                    "type": "default",
+                    "connection": {
+                        "direction": "left",
+                        "receivingNode": "Check credentials",
+                        "startMarkerType": "dot",
+                        "endMarkerType": "arrow"
+                    }
+                }
+            ]
+        },
+        "Check credentials": {
+            "title": "Check credentials",
+            "icon": "cloud",
+            "description": "Verifies credentials with the API",
+            "color": "orange",
+            "dimensions": {
+                "x": 18,
+                "y": 11,
+                "width": 6
+            },
+            "links": [
+                {
+                    "title": "Success",
+                    "type": "default",
+                    "connection": {
+                        "direction": "right",
+                        "receivingNode": "Show home screen",
+                        "startMarkerType": "dot",
+                        "endMarkerType": "arrow"
+                    }
+                },
+                {
+                    "title": "Failure",
+                    "type": "flash-message",
+                    "lineStrokeColor": "red",
+                    "color": "red",
+                    "connection": {
+                        "direction": "left",
+                        "receivingNode": "Show log in screen",
+                        "startMarkerType": "dot",
+                        "endMarkerType": "arrow"
+                    }
+                }
+            ]
+        },
+        "Show log in screen": {
+            "title": "Show log in screen",
+            "icon": "smartphone",
+            "description": "Prompt the user to log in",
+            "color": "blue",
+            "dimensions": {
+                "x": 5,
+                "y": 8,
+                "width": 8
+            },
+            "links": [
+                {
+                    "title": "Submit log in form",
+                    "type": "default",
+                    "color": "orange",
+                    "lineStrokeColor": "orange",
+                    "connection": {
+                        "direction": "right",
+                        "receivingNode": "Check credentials",
+                        "startMarkerType": "dot",
+                        "endMarkerType": "arrow"
+                    }
+                }
+            ]
+        },
+        "Show home screen": {
+            "title": "Show home screen",
+            "icon": "smartphone",
+            "description": "Shows the Home view, fetches data",
+            "color": "blue",
+            "dimensions": {
+                "x": 32,
+                "y": 10,
+                "width": 6
+            },
+            "links": [
+                {
+                    "title": "Clicked Profile",
+                    "type": "default",
+                    "connection": {
+                        "direction": "right",
+                        "receivingNode": "Show user profile view",
+                        "startMarkerType": "dot",
+                        "endMarkerType": "arrow"
+                    }
+                }
+            ]
+        },
+        "Show user profile view": {
+            "title": "Show user profile view",
+            "icon": "smartphone",
+            "description": "Shows the UserProfile view",
+            "color": "blue",
+            "dimensions": {
+                "x": 44,
+                "y": 10,
+                "width": 6
+            },
+            "links": [
+                {
+                    "title": "Clicked Back",
+                    "type": "go-back"
+                },
+                {
+                    "title": "Clicked Save Profile",
+                    "type": "default",
+                    "lineStrokeColor": "orange",
+                    "connection": {
+                        "direction": "right",
+                        "receivingNode": "Save profile information",
+                        "startMarkerType": "dot",
+                        "endMarkerType": "arrow"
+                    }
+                }
+            ]
+        },
+        "Save profile information": {
+            "title": "Save profile information",
+            "icon": "cloud",
+            "description": "Sends new user info to the API to store",
+            "color": "orange",
+            "dimensions": {
+                "x": 56,
+                "y": 10,
+                "width": 6
+            },
+            "links": [
+                {
+                    "title": "Save successful",
+                    "type": "flash-message",
+                    "connection": {
+                        "direction": "left",
+                        "receivingNode": "Show user profile view",
+                        "startMarkerType": "dot",
+                        "endMarkerType": "arrow"
+                    }
+                },
+                {
+                    "title": "Error",
+                    "type": "flash-message",
+                    "lineStrokeColor": "red",
+                    "connection": {
+                        "direction": "left",
+                        "receivingNode": "Show user profile view",
+                        "startMarkerType": "dot",
+                        "endMarkerType": "arrow"
+                    }
+                }
+            ]
+        }
+    }
+}

@@ -44,22 +44,32 @@ export default {
       this.$emit('deactivated', event);
     },
 
-    mouseoverEvent(nodeEvent) {
-      console.log('mouseover', nodeEvent);
-      // const event = {
-      //   fromNode: `${this.node.title}/${nodeEvent.title}`,
-      //   toNode: nodeEvent.connection.toNode,
-      // };
-      // this.$emit('mouseoverEvent', event);
+    mouseoverLink(nodeLink) {
+      // console.log('mouseover', nodeLink);
+      // TODO: allow activating incoming connections
+      if (nodeLink.connection === true || !nodeLink.connection) {
+        return;
+      }
+      const link = {
+        originNode: `${this.node.title}/${nodeLink.title}`,
+        receivingNode: nodeLink.connection.receivingNode,
+        receivingNodeIndex: nodeLink.connection.receivingNodeIndex || 0,
+      };
+      this.$emit('mouseoverLink', link);
     },
 
-    mouseoutEvent(nodeEvent) {
-      console.log('mouseOut', nodeEvent);
-      // const event = {
-      //   fromNode: `${this.node.title}/${nodeEvent.title}`,
-      //   toNode: nodeEvent.connection.toNode,
-      // };
-      // this.$emit('mouseoutEvent', event);
+    mouseoutLink(nodeLink) {
+      // console.log('mouseOut', nodeLink);
+      // TODO: allow activating incoming connections
+      if (nodeLink.connection === true || !nodeLink.connection) {
+        return;
+      }
+      const link = {
+        originNode: `${this.node.title}/${nodeLink.title}`,
+        receivingNode: nodeLink.connection.receivingNode,
+        receivingNodeIndex: nodeLink.connection.receivingNodeIndex || 0,
+      };
+      this.$emit('mouseoutLink', link);
     },
   },
 
@@ -78,7 +88,7 @@ export default {
     :w="node.dimensions.width * 30"
     :minWidth="4 * 30"
     :maxWidth="12 * 30"
-    :h="30 + (node.description != null ? 60 : 0) + (node.events.length * 30)"
+    :h="30 + (node.description != null ? 60 : 0) + (node.links.length * 30)"
     :x="node.dimensions.x * 30"
     :y="node.dimensions.y * 30"
     :handles="['ml', 'mr']"
@@ -91,7 +101,10 @@ export default {
     <header
       :class="`node-header ${node.color || ''}`"
     >
-      <div v-if="node.icon">{{ node.icon }}</div>
+      <div
+        v-if="node.icon"
+        class="icon"
+      >{{ node.icon }}</div>
       {{ node.title }}
     </header>
 
@@ -102,68 +115,68 @@ export default {
       {{ node.description }}
     </div>
 
-    <template v-for="event in node.events">
+    <template v-for="link in node.links">
       <div
-        :key="event.title"
-        class="node-event"
+        :key="link.title"
+        class="node-link"
         :class="{
-          [event.color]: true,
-          [event.type]: true,
+          [link.color]: true,
+          [link.type]: true,
         }"
-        @mouseover="mouseoverEvent(event)"
-        @mouseout="mouseoutEvent(event)"
+        @mouseover="mouseoverLink(link)"
+        @mouseout="mouseoutLink(link)"
       >
-        <div class="node-title">{{ event.title }}</div>
+        <div class="node-title">{{ link.title }}</div>
 
         <!-- Inline bool -->
-        <template v-if="event.type === 'inline-bool'">
+        <template v-if="link.type === 'inline-bool'">
           <div class="variable variable-left bool false">F</div>
           <div class="variable variable-right bool true">T</div>
         </template>
         <!-- End inline bool -->
 
         <!-- Number -->
-        <template v-if="event.type === 'number'">
+        <template v-if="link.type === 'number'">
           <input
             type="number"
-            :value="event.title"
+            :value="link.title"
           />
           <div
             class="output-attachment"
             :class="{
-              [event.color]: true,
-              connected: event.connection,
+              [link.color]: true,
+              connected: link.connection,
             }"
           ></div>
         </template>
         <!-- End number -->
 
         <!-- Output -->
-        <template v-if="event.type === 'output'">
+        <template v-if="link.type === 'output'">
           <div
             class="output-attachment"
             :class="{
-              [event.color]: true,
-              connected: event.connection,
+              [link.color]: true,
+              connected: link.connection,
             }"
           ></div>
         </template>
         <!-- End output -->
 
         <!-- Input -->
-        <template v-if="event.type === 'input'">
+        <template v-if="link.type === 'input'">
           <div
             class="input-attachment"
             :class="{
-              [event.color]: true,
-              connected: event.connection,
+              [link.color]: true,
+              connected: link.connection,
             }"
           ></div>
         </template>
         <!-- End input -->
 
         <!-- Flash message -->
-        <template v-if="event.type === 'flash-message'">
+        <template v-if="link.type === 'flash-message'">
           <div class="variable variable-left flash-message">
             <div>message</div>
           </div>
@@ -171,7 +184,7 @@ export default {
         <!-- End flash message -->
 
         <!-- Go back -->
-        <template v-if="event.type === 'go-back'">
+        <template v-if="link.type === 'go-back'">
           <div class="variable variable-left go-back">
             <div>history</div>
           </div>
@@ -205,11 +218,12 @@ export default {
 
   .node-header,
   .node-description,
-  .node-event {
+  .node-link {
     height: 3rem;
     padding: 0.8rem 1.4rem;
 
     .icon {
+      margin-right: 0.6rem;
       font-size: 1.8rem;
       vertical-align: top;
     }
@@ -225,6 +239,7 @@ export default {
     overflow: hidden;
     border-radius: 0.3rem;
     font-size: 1.2rem;
+    white-space: nowrap;
     text-shadow: 0 0.1rem 0.1rem hsla(0, 0%, 0%, 0.7);
     box-shadow: inset 0rem 0.1rem 0rem 0rem hsla(0, 0%, 100%, 0.3),
       0rem 0rem 0rem 0.1rem hsla(0, 0%, 0%, 0.5);
@@ -243,11 +258,12 @@ export default {
     cursor: default;
   }
 
-  .node-event {
+  .node-link {
     position: relative;
     display: flex;
     align-items: center;
     font-size: 1.2rem;
+    white-space: nowrap;
     color: #efefef;
     cursor: default;
     --background: #81C784;
@@ -355,7 +371,7 @@ export default {
       }
     }
     &.connected,
-    .active .node-event:hover & {
+    .active .node-link:hover & {
       transform: scale(1);
       opacity: 1;
       cursor: grab;
@@ -377,7 +393,7 @@ export default {
       left: 1.2rem;
     }
 
-    .active .node-event:hover & {
+    .active .node-link:hover & {
       cursor: grab;
     }
   }

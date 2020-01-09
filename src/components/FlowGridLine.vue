@@ -1,4 +1,6 @@
 <script>
+import colors from '../colors';
+
 export default {
   props: ['line'],
 
@@ -16,62 +18,73 @@ export default {
 
   methods: {
     generateBezierLine(line) {
+      const originPoint = line.points[0];
+      const receivingPoint = line.points[1];
       let beginning = '';
       let middle = '';
       let end = '';
 
-      if (line.points[0].direction === 'left') {
+      // -- Beginning point --
+      if (originPoint.direction === 'left') {
         beginning = `
-          M ${line.points[0].x - 15} ${line.points[0].y}
-          L ${line.points[0].x - 30} ${line.points[0].y}
+          M ${originPoint.x - 15} ${originPoint.y}
+          L ${originPoint.x - 30} ${originPoint.y}
         `;
       } else {
         beginning = `
-          M ${line.points[0].x + 15} ${line.points[0].y}
-          L ${line.points[0].x + 30} ${line.points[0].y}
+          M ${originPoint.x + 15} ${originPoint.y}
+          L ${originPoint.x + 30} ${originPoint.y}
         `;
       }
+      // -- End beginning point --
 
-      if (line.points[0].direction === 'left') {
-        if (line.points[1].direction === 'left') {
+      // -- Middle (control) points --
+      // C <control point 1 x> <control 1 point y>
+      //   <control point 2 x> <control 2 point y>
+      //   <curve end point x> <curve end point y>
+      if (originPoint.direction === 'left') {
+        if (receivingPoint.direction === 'left') {
           middle = `
-          C ${line.points[0].x - 60} ${line.points[0].y}
-            ${line.points[1].x - 60} ${line.points[1].y}
-            ${line.points[1].x - 15} ${line.points[1].y}
+          C ${originPoint.x - 60} ${originPoint.y}
+            ${receivingPoint.x - 30} ${receivingPoint.y}
+            ${receivingPoint.x - 0} ${receivingPoint.y}
           `;
         } else {
           middle = `
-          C ${line.points[0].x - 60} ${line.points[0].y}
-            ${line.points[1].x + 60} ${line.points[1].y}
-            ${line.points[1].x + 30} ${line.points[1].y}
+          C ${originPoint.x - 60} ${originPoint.y}
+            ${receivingPoint.x + 60} ${receivingPoint.y}
+            ${receivingPoint.x + 30} ${receivingPoint.y}
           `;
         }
       } else {
         middle = '';
-        if (line.points[1].direction === 'left') {
+        if (receivingPoint.direction === 'left') {
           middle = `
-            C ${line.points[0].x + 60} ${line.points[0].y}
-              ${line.points[1].x - 60} ${line.points[1].y}
-              ${line.points[1].x - 15} ${line.points[1].y}
+            C ${originPoint.x + 60} ${originPoint.y}
+              ${receivingPoint.x - 30} ${receivingPoint.y}
+              ${receivingPoint.x - 0} ${receivingPoint.y}
             `;
         } else {
           middle = `
-            C ${line.points[0].x + 60} ${line.points[0].y}
-              ${line.points[1].x + 60} ${line.points[1].y}
-              ${line.points[1].x + 30} ${line.points[1].y}
+            C ${originPoint.x + 60} ${originPoint.y}
+              ${receivingPoint.x + 30} ${receivingPoint.y}
+              ${receivingPoint.x + 30} ${receivingPoint.y}
             `;
         }
       }
+      // -- End middle points --
 
-      if (line.points[1].direction === 'left') {
+      // -- End points --
+      if (receivingPoint.direction === 'left') {
         end = `
-          L ${line.points[1].x + 15} ${line.points[1].y}
+          L ${receivingPoint.x + 15} ${receivingPoint.y}
         `;
       } else {
         end = `
-          L ${line.points[1].x + 22} ${line.points[1].y}
+          L ${receivingPoint.x} ${receivingPoint.y}
         `;
       }
+      // -- End end points --
 
       return `${beginning} ${middle} ${end}`;
     },
@@ -83,7 +96,7 @@ export default {
 
       const lineName = `Line:${node.title}/${event.title}->${event.connection.toNode}`;
       if (this.$refs[lineName] && this.$refs[lineName].length > 0) {
-        this.$refs[lineName][0].classList.add('highlighted');
+        this.$refs[lineName][0].classList.add('active');
       }
     },
 
@@ -94,21 +107,14 @@ export default {
 
       const lineName = `Line:${node.title}/${event.title}->${event.connection.toNode}`;
       if (this.$refs[lineName] && this.$refs[lineName].length > 0) {
-        this.$refs[lineName][0].classList.remove('highlighted');
+        this.$refs[lineName][0].classList.remove('active');
       }
     },
   },
 
   data() {
     return {
-      lineColors: { // FIXME: import these; shared in FlowGrid
-        default: '#4caf50',
-        green: '#4caf50',
-        red: '#e53935',
-        orange: '#ffb300',
-        deepOrange: '#FF7043',
-        amber: '#FFCA28',
-      },
+      lineColors: colors,
     };
   },
 };
@@ -125,10 +131,14 @@ export default {
       fill="transparent"
       :marker-start="startMarker"
       :marker-end="endMarker"
-      :class="{ highlighted: line.active }"
+      :class="{ active: line.active }"
     />
 
-    <text x="30" dy="-4">
+    <text
+      v-if="line.showText"
+      x="30"
+      dy="-4"
+    >
       <textPath
         :xlink:href="`#${line.id}`"
         fill="#cfd8dc"
@@ -143,7 +153,7 @@ export default {
   path {
     transition: stroke 0.1s ease-in-out;
 
-    &.highlighted {
+    &.active {
       stroke: #fff;
     }
   }

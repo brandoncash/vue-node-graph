@@ -1,0 +1,334 @@
+{
+    "nodes": {
+        "right-straight-origin": {
+            "title": "Straight",
+            "color": "teal",
+            "dimensions": {
+                "x": 2,
+                "y": 2,
+                "width": 4
+            },
+            "links": [
+                {
+                    "title": "Node",
+                    "type": "default",
+                    "color": "green",
+                    "lineStrokeColor": "green",
+                    "connection": {
+                        "direction": "right",
+                        "receivingNode": "right-straight-receiving",
+                        "startMarkerType": "dot",
+                        "endMarkerType": "arrow"
+                    }
+                }
+            ]
+        },
+        "right-straight-receiving": {
+            "title": "Straight",
+            "color": "teal",
+            "dimensions": {
+                "x": 8,
+                "y": 3,
+                "width": 4
+            },
+            "links": []
+        },
+        "left-straight-origin": {
+            "title": "Straight",
+            "color": "teal",
+            "dimensions": {
+                "x": 20,
+                "y": 2,
+                "width": 4
+            },
+            "links": [
+                {
+                    "title": "Node",
+                    "type": "default",
+                    "color": "green",
+                    "lineStrokeColor": "green",
+                    "connection": {
+                        "direction": "left",
+                        "receivingNode": "left-straight-receiving",
+                        "startMarkerType": "dot",
+                        "endMarkerType": "arrow"
+                    }
+                }
+            ]
+        },
+        "left-straight-receiving": {
+            "title": "Straight",
+            "color": "teal",
+            "dimensions": {
+                "x": 14,
+                "y": 3,
+                "width": 4
+            },
+            "links": []
+        },
+        "right-1-1-origin": {
+            "title": "Right +1 +1",
+            "color": "teal",
+            "dimensions": {
+                "x": 2,
+                "y": 5,
+                "width": 4
+            },
+            "links": [
+                {
+                    "title": "Node",
+                    "type": "default",
+                    "color": "green",
+                    "lineStrokeColor": "green",
+                    "connection": {
+                        "direction": "right",
+                        "receivingNode": "right-1-1-receiving",
+                        "startMarkerType": "dot",
+                        "endMarkerType": "arrow"
+                    }
+                }
+            ]
+        },
+        "right-1-1-receiving": {
+            "title": "Right +1 +1",
+            "color": "teal",
+            "dimensions": {
+                "x": 7,
+                "y": 7,
+                "width": 4
+            },
+            "links": []
+        },
+        "right-2-1-origin": {
+            "title": "Right +2 +1",
+            "color": "teal",
+            "dimensions": {
+                "x": 2,
+                "y": 8,
+                "width": 4
+            },
+            "links": [
+                {
+                    "title": "Node",
+                    "type": "default",
+                    "color": "green",
+                    "lineStrokeColor": "green",
+                    "connection": {
+                        "direction": "right",
+                        "receivingNode": "right-2-1-receiving",
+                        "startMarkerType": "dot",
+                        "endMarkerType": "arrow"
+                    }
+                }
+            ]
+        },
+        "right-2-1-receiving": {
+            "title": "Right +2 +1",
+            "color": "teal",
+            "dimensions": {
+                "x": 8,
+                "y": 10,
+                "width": 4
+            },
+            "links": []
+        },
+        "right-2-2-origin": {
+            "title": "Right +2 +2",
+            "color": "teal",
+            "dimensions": {
+                "x": 2,
+                "y": 12,
+                "width": 4
+            },
+            "links": [
+                {
+                    "title": "Node",
+                    "type": "default",
+                    "color": "green",
+                    "lineStrokeColor": "green",
+                    "connection": {
+                        "direction": "right",
+                        "receivingNode": "right-2-2-receiving",
+                        "startMarkerType": "dot",
+                        "endMarkerType": "arrow"
+                    }
+                }
+            ]
+        },
+        "right-2-2-receiving": {
+            "title": "Right +2 +2",
+            "color": "teal",
+            "dimensions": {
+                "x": 8,
+                "y": 15,
+                "width": 4
+            },
+            "links": []
+        },
+        "right-3-3-origin": {
+            "title": "Right +3 +3",
+            "color": "teal",
+            "dimensions": {
+                "x": 2,
+                "y": 15,
+                "width": 4
+            },
+            "links": [
+                {
+                    "title": "Node",
+                    "type": "default",
+                    "color": "green",
+                    "lineStrokeColor": "green",
+                    "connection": {
+                        "direction": "right",
+                        "receivingNode": "right-3-3-receiving",
+                        "startMarkerType": "dot",
+                        "endMarkerType": "arrow"
+                    }
+                }
+            ]
+        },
+        "right-3-3-receiving": {
+            "title": "Right +3 +3",
+            "color": "teal",
+            "dimensions": {
+                "x": 9,
+                "y": 19,
+                "width": 4
+            },
+            "links": []
+        },
+        "left-1-1-origin": {
+            "title": "Left -1 +1",
+            "color": "teal",
+            "dimensions": {
+                "x": 20,
+                "y": 5,
+                "width": 4
+            },
+            "links": [
+                {
+                    "title": "Node",
+                    "type": "default",
+                    "color": "green",
+                    "lineStrokeColor": "green",
+                    "connection": {
+                        "direction": "left",
+                        "receivingNode": "left-1-1-receiving",
+                        "startMarkerType": "dot",
+                        "endMarkerType": "arrow"
+                    }
+                }
+            ]
+        },
+        "left-1-1-receiving": {
+            "title": "Left -1 +1",
+            "color": "teal",
+            "dimensions": {
+                "x": 15,
+                "y": 7,
+                "width": 4
+            },
+            "links": []
+        },
+        "left-2-1-origin": {
+            "title": "Left -2 +1",
+            "color": "teal",
+            "dimensions": {
+                "x": 20,
+                "y": 8,
+                "width": 4
+            },
+            "links": [
+                {
+                    "title": "Node",
+                    "type": "default",
+                    "color": "green",
+                    "lineStrokeColor": "green",
+                    "connection": {
+                        "direction": "left",
+                        "receivingNode": "left-2-1-receiving",
+                        "startMarkerType": "dot",
+                        "endMarkerType": "arrow"
+                    }
+                }
+            ]
+        },
+        "left-2-1-receiving": {
+            "title": "Left -2 +1",
+            "color": "teal",
+            "dimensions": {
+                "x": 14,
+                "y": 10,
+                "width": 4
+            },
+            "links": []
+        },
+        "left-2-2origin": {
+            "title": "Left -2 +2",
+            "color": "teal",
+            "dimensions": {
+                "x": 20,
+                "y": 12,
+                "width": 4
+            },
+            "links": [
+                {
+                    "title": "Node",
+                    "type": "default",
+                    "color": "green",
+                    "lineStrokeColor": "green",
+                    "connection": {
+                        "direction": "left",
+                        "receivingNode": "left-2-2receiving",
+                        "startMarkerType": "dot",
+                        "endMarkerType": "arrow"
+                    }
+                }
+            ]
+        },
+        "left-2-2receiving": {
+            "title": "Left -2 +2",
+            "color": "teal",
+            "dimensions": {
+                "x": 14,
+                "y": 15,
+                "width": 4
+            },
+            "links": []
+        },
+        "left-3-3-origin": {
+            "title": "Left -3 +3",
+            "color": "teal",
+            "dimensions": {
+                "x": 20,
+                "y": 15,
+                "width": 4
+            },
+            "links": [
+                {
+                    "title": "Node",
+                    "type": "default",
+                    "color": "green",
+                    "lineStrokeColor": "green",
+                    "connection": {
+                        "direction": "left",
+                        "receivingNode": "left-3-3-receiving",
+                        "startMarkerType": "dot",
+                        "endMarkerType": "arrow"
+                    }
+                }
+            ]
+        },
+        "left-3-3-receiving": {
+            "title": "Left -3 +3",
+            "color": "teal",
+            "dimensions": {
+                "x": 14,
+                "y": 19,
+                "width": 4
+            },
+            "links": []
+        }
+    }
+}
