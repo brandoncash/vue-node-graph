@@ -1,11 +1,13 @@
 <script>
 import VueDraggableResizable from 'vue-draggable-resizable';
+import NodeLink from '@/components/node-links/NodeLink.vue';
 
 export default {
   props: ['node'],
 
   components: {
     VueDraggableResizable,
+    NodeLink,
   },
 
   methods: {
@@ -47,7 +49,7 @@ export default {
     mouseoverLink(nodeLink) {
       // console.log('mouseover', nodeLink);
       // TODO: allow activating incoming connections
-      if (nodeLink.connection === true || !nodeLink.connection) {
+      if (!nodeLink.connection) {
         return;
       }
       const link = {
@@ -61,7 +63,7 @@ export default {
     mouseoutLink(nodeLink) {
       // console.log('mouseOut', nodeLink);
       // TODO: allow activating incoming connections
-      if (nodeLink.connection === true || !nodeLink.connection) {
+      if (!nodeLink.connection) {
         return;
       }
       const link = {
@@ -98,16 +100,24 @@ export default {
     @activated="onActivate"
     @deactivated="onDeactivate"
   >
+    <!-- Header -->
     <header
-      :class="`node-header ${node.color || ''}`"
+      class="node-header"
+      :class="{
+        [node.color]: true,
+      }"
     >
       <div
         v-if="node.icon"
         class="icon"
-      >{{ node.icon }}</div>
+      >
+        {{ node.icon }}
+      </div>
+
       {{ node.title }}
     </header>
 
+    <!-- Description -->
     <div
       v-if="node.description != null"
       class="node-description"
@@ -115,83 +125,14 @@ export default {
       {{ node.description }}
     </div>
 
-    <template v-for="link in node.links">
-      <div
-        :key="link.title"
-        class="node-link"
-        :class="{
-          [link.color]: true,
-          [link.type]: true,
-        }"
-        @mouseover="mouseoverLink(link)"
-        @mouseout="mouseoutLink(link)"
-      >
-        <div class="node-title">{{ link.title }}</div>
-
-        <!-- Inline bool -->
-        <template v-if="link.type === 'inline-bool'">
-          <div class="variable variable-left bool false">F</div>
-          <div class="variable variable-right bool true">T</div>
-        </template>
-        <!-- End inline bool -->
-
-        <!-- Number -->
-        <template v-if="link.type === 'number'">
-          <input
-            type="number"
-            :value="link.title"
-          />
-          <div
-            class="output-attachment"
-            :class="{
-              [link.color]: true,
-              connected: link.connection,
-            }"
-          ></div>
-        </template>
-        <!-- End number -->
-
-        <!-- Output -->
-        <template v-if="link.type === 'output'">
-          <div
-            class="output-attachment"
-            :class="{
-              [link.color]: true,
-              connected: link.connection,
-            }"
-          ></div>
-        </template>
-        <!-- End output -->
-
-        <!-- Input -->
-        <template v-if="link.type === 'input'">
-          <div
-            class="input-attachment"
-            :class="{
-              [link.color]: true,
-              connected: link.connection,
-            }"
-          ></div>
-        </template>
-        <!-- End input -->
-
-        <!-- Flash message -->
-        <template v-if="link.type === 'flash-message'">
-          <div class="variable variable-left flash-message">
-            <div>message</div>
-          </div>
-        </template>
-        <!-- End flash message -->
-
-        <!-- Go back -->
-        <template v-if="link.type === 'go-back'">
-          <div class="variable variable-left go-back">
-            <div>history</div>
-          </div>
-        </template>
-        <!-- End go back -->
-      </div>
-    </template>
+    <!-- A list of all links -->
+    <node-link
+      v-for="link in node.links"
+      :key="link.title"
+      :link="link"
+      @mouseover="mouseoverLink(link)"
+      @mouseout="mouseoutLink(link)"
+    />
   </vue-draggable-resizable>
 </template>
 
@@ -258,41 +199,6 @@ export default {
     cursor: default;
   }
 
-  .node-link {
-    position: relative;
-    display: flex;
-    align-items: center;
-    font-size: 1.2rem;
-    white-space: nowrap;
-    color: #efefef;
-    cursor: default;
-    --background: #81C784;
-    background-image: linear-gradient(0deg, transparent,
-      hsla(0, 0%, 0%, 0.2) 50%,
-      hsla(0, 0%, 0%, 0) 51%),
-      radial-gradient(80% 100% at 50% 0, var(--background), transparent);
-    text-shadow: 0 0.1rem 0.1rem hsla(0, 0%, 0%, 0.7);
-    box-shadow: inset 0rem 0rem 0rem 0.1rem hsla(0, 0%, 0%, 0.3);
-
-    .active &:hover {
-      background-color: hsla(0, 0%, 100%, 0.3);
-    }
-
-    &.input {
-      background-image: linear-gradient(0deg, transparent,
-        hsla(0, 0%, 0%, 0.2) 50%,
-        hsla(0, 0%, 0%, 0) 51%),
-        radial-gradient(80% 100% at 0% 0%, var(--background), transparent);
-    }
-    &.output {
-      justify-content: flex-end;
-      background-image: linear-gradient(0deg, transparent,
-        hsla(0, 0%, 0%, 0.2) 50%,
-        hsla(0, 0%, 0%, 0) 51%),
-        radial-gradient(80% 100% at 100% 0%, var(--background), transparent);
-    }
-  }
-
   .variable {
     position: absolute;
     top: 0.5rem;
@@ -339,121 +245,6 @@ export default {
   }
   .variable-right {
     right: -2.5rem;
-  }
-
-  .input-attachment,
-  .output-attachment {
-    position: absolute;
-    box-shadow: 0rem 0.1rem 0.1rem hsla(0, 0%, 0%, 0.5);
-    border: 0.4rem solid var(--background);
-    border-radius: 100%;
-    width: 1.8rem;
-    height: 1.8rem;
-    --background: hsla(0, 0%, 100%, 0.5);
-    transform: scale(0.8);
-    opacity: 0.6;
-
-    &:after {
-      content: '';
-      display: block;
-      position: absolute;
-      top: 0.3rem;
-      width: 0.6rem;
-      height: 0.4rem;
-      background-color: var(--background);
-    }
-
-    &.connected {
-      background-color: var(--background);
-
-      &:after {
-        display: none;
-      }
-    }
-    &.connected,
-    .active .node-link:hover & {
-      transform: scale(1);
-      opacity: 1;
-      cursor: grab;
-    }
-  }
-
-  .input-attachment {
-    left: -0.9rem;
-
-    &:after {
-      left: -0.8rem;
-    }
-  }
-
-  .output-attachment {
-    right: -0.9rem;
-
-    &:after {
-      left: 1.2rem;
-    }
-
-    .active .node-link:hover & {
-      cursor: grab;
-    }
-  }
-
-  .red {
-    --background: #ef5350;
-  }
-  .pink {
-    --background: #EC407A;
-  }
-  .purple {
-    --background: #AB47BC;
-  }
-  .deep-purple {
-    --background: #7E57C2;
-  }
-  .indigo {
-    --background: #5C6BC0;
-  }
-  .blue {
-    --background: #42A5F5;
-  }
-  .light-blue {
-    --background: #29B6F6;
-  }
-  .cyan {
-    --background: #26C6DA;
-  }
-  .teal {
-    --background: #26A69A;
-  }
-  .green {
-    --background: #66BB6A;
-  }
-  .light-green {
-    --background: #9CCC65;
-  }
-  .lime {
-    --background: #D4E157;
-  }
-  .yellow {
-    --background: #FFEE58;
-  }
-  .amber {
-    --background: #FFCA28;
-  }
-  .orange {
-    --background: #FFA726;
-  }
-  .deep-orange {
-    --background: #FF7043;
-  }
-  .brown {
-    --background: #8D6E63;
-  }
-  .grey {
-    --background: #BDBDBD;
-  }
-  .blue-grey {
-    --background: #78909C;
   }
 
   .handle {

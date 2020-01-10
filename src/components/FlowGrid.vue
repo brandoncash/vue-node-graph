@@ -49,6 +49,7 @@ export default {
   methods: {
     resetNodes() {
       this.nodes = {};
+
       Object.keys(this.nodeData).forEach((nodeKey) => {
         this.nodes[nodeKey] = {
           ...this.nodeData[nodeKey],
@@ -73,38 +74,32 @@ export default {
         const currentNode = this.nodes[nodeKey];
 
         currentNode.links.forEach((link, linkIndex) => {
-          const { connection } = link;
-
           // No connection available
-          if (typeof (connection) === 'undefined') {
-            return;
-          }
-          // This is an incoming connection
-          if (connection === true) {
+          if (typeof (link.connection) === 'undefined') {
             return;
           }
 
           const receivingNodeIndex = link.connection.receivingNodeIndex || 0;
           const originNodeName = `${currentNode.title}/${link.title}`;
-          const receivingNodeName = this.nodes[connection.receivingNode].title;
+          const receivingNodeName = this.nodes[link.connection.receivingNode].title;
 
           // Start with some defaults
           const newLine = {
-            ref: `Line:${originNodeName}->${connection.receivingNode}`,
-            id: `Line--${originNodeName}--${connection.receivingNode}-${receivingNodeIndex}`,
+            ref: `Line:${originNodeName}->${link.connection.receivingNode}`,
+            id: `Line--${originNodeName}--${link.connection.receivingNode}-${receivingNodeIndex}`,
             strokeColor: link.lineStrokeColor || 'default',
-            startMarkerType: connection.startMarkerType,
-            endMarkerType: connection.endMarkerType,
+            startMarkerType: link.connection.startMarkerType,
+            endMarkerType: link.connection.endMarkerType,
             points: [],
             text: receivingNodeName,
             active: false,
-            showText: connection.showText || false,
+            showText: link.connection.showText || false,
           };
 
           // -- The origin point --
           const originNodeX = currentNode.dimensions.x * 30;
           const originPoint = { x: 0, y: 0, direction: 'left' };
-          if (connection.direction === 'left') {
+          if (link.connection.direction === 'left') {
             originPoint.direction = 'left';
             originPoint.x = originNodeX + 15; // half a unit offset
             originPoint.y = (
@@ -130,15 +125,20 @@ export default {
 
           // -- The receiving point --
           const receivingPoint = { x: 0, y: 0, direction: 'left' };
-          const receivingNode = this.nodes[connection.receivingNode];
-          if (connection.receivingNodeIndex) {
-            receivingNode.links[connection.receivingNodeIndex - 1].connection = true;
+          const receivingNode = this.nodes[link.connection.receivingNode];
+
+          if (link.connection.receivingNodeIndex) {
+            receivingNode.links[link.connection.receivingNodeIndex - 1].incomingConnection = {
+              connected: true,
+              connectionColor: link.lineStrokeColor || 'default',
+            };
           }
 
           const receivingNodeX = receivingNode.dimensions.x * 30;
           const receivingNodeY = (
             (receivingNode.dimensions.y * 30)
-            // + (connection.receivingNodeIndex * 30) // + node index offset
+            + (link.connection.receivingNodeIndex ? link.connection.receivingNodeIndex * 30 : 0)
+            // + node index offset
             + 15 // + half of a unit offset to center it
           );
 
