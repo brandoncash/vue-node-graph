@@ -193,14 +193,11 @@ export default {
     },
 
     mouseoverLink(link) {
-      // console.log('mouseover', link);
       const lineName = `Line--${link.originNode}--${link.receivingNode}-${link.receivingNodeIndex}`;
       this.lines[lineName].active = true;
-      console.log('--', this.lines[lineName]);
     },
 
     mouseoutLink(link) {
-      // console.log('mouseout', link);
       const lineName = `Line--${link.originNode}--${link.receivingNode}-${link.receivingNodeIndex}`;
       this.lines[lineName].active = false;
     },

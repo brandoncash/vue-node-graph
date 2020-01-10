@@ -3,6 +3,9 @@
 
 vue-node-graph is a Vue component library used to generate and edit node based graphs such as state machines, graphics shaders, and UMLs.
 
+[View a live demo](https://brandon.cash/projects/vue-node-graph/)
+
+
 ## Project setup
 ```
 yarn install
